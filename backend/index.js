@@ -918,31 +918,26 @@ Main tumhe category-wise verified list dikha sakta hoon.
   });
 }
 
-    // --------------------------------
-    // CSVTU OFFICIAL WEBSITE DIRECT LINK HANDLER
-    // --------------------------------
-    const askOfficialWebsite =
-      lower.includes("official website") ||
-      lower.includes("official site") ||
-      lower.includes("website link") ||
-      lower.includes("site link") ||
-      (lower.includes("website") && (lower.includes("csvtu") || lower.includes("university")));
+    // ----------------------------------
+ // CSVTU OFFICIAL WEBSITE DIRECT LINK (CLICKABLE)
+ // ----------------------------------
+const askOfficialSite =
+  lower.includes("official website") ||
+  lower.includes("official site") ||
+  lower.includes("csvtu official") ||
+  lower.includes("official link of csvtu") ||
+  lower.includes("csvtu website");
 
-    if (askOfficialWebsite) {
-      return res.json({
-        reply: `
-**Official CSVTU Website (Verified)** 🌐
+if (askOfficialSite) {
+  return res.json({
+    reply: `
+CSVTU Official Website ✅
 
-You can visit the official website of  
-Chhattisgarh Swami Vivekanand Technical University (CSVTU) at:
-
-👉 https://csvtu.ac.in/
-
-This is the main site for all university information  
-(admissions, results, notices, syllabus, UTD, affiliated colleges, etc.).
+<a href="https://csvtu.ac.in" target="_blank">https://csvtu.ac.in</a>
 `.trim(),
-      });
-    }
+  });
+}
+
 
 
 
