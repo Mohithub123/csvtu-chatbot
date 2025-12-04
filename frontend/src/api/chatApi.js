@@ -1,6 +1,7 @@
 // frontend/src/api/chatApi.js
 
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = "https://csvtu-chatbot.onrender.com";
+
 
 export default class ChatApi {
   // User ke free text questions ke liye
