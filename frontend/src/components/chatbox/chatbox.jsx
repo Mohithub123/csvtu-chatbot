@@ -15,155 +15,158 @@ export default function ChatBox(props) {
   const [micActive, setMicActive] = useState(false);
   const locked = useRef(false);
   const inputRef = useRef(null);
-  const divRef = useRef(null)
-  const [chats, setChats] = useState([]);
+  const messagesEndRef = useRef(null);
 
-  const { listen, listening, stop, supported } = useSpeechRecognition({
-    onResult: (result) => {
-      setChatBoxValue(result);
+  // ✅ STATIC WELCOME MESSAGE
+  const [chats, setChats] = useState([
+    {
+      created_by: "server",
+      message:
+        "👋 Welcome to CSVTU UTD Bhilai Chatbot!\n" +
+        "You can ask about courses, admission, results, exam time table, academic calendar, affiliated colleges, etc.",
+      related: null,
     },
-  });
+  ]);
 
+  // 🎙 VOICE
+  const { listen, listening, stop, supported } = useSpeechRecognition({
+    onResult: (result) => setChatBoxValue(result),
+  });
   const { speak } = useSpeechSynthesis();
 
+  // 🔁 CHAT UPDATER
   function updateChats(created_by, message, related = null) {
-    setChats((chats) => [
+    setChats((prev) => [
+      ...prev,
       {
-        created_by: created_by,
-        message: message,
-        related: related,
+        created_by,
+        message,
+        related,
       },
-      ...chats,
     ]);
-    if (micActive && created_by === "server") {
-      speak({ text: message });
-    }
+    if (micActive && created_by === "server") speak({ text: message });
   }
 
   function onDataReceived(data) {
     setChatBoxValue("");
-    if (data["status"] === 200) {
-      const related = Object.values(data["related"]);
-      if (related.length === 0) {
-        updateChats("server", data["message"]);
-      } else {
-        updateChats("server", data["message"], related);
-      }
-    } else if (data["status"] === 400) {
-      updateChats("server", data["message"]);
+
+    if (data?.status === 200) {
+      const related = Object.values(data.related || {});
+      updateChats("server", data.message, related.length ? related : null);
+    } else if (data?.status === 400) {
+      updateChats("server", data.message);
+    } else {
+      updateChats("server", data?.message || JSON.stringify(data));
     }
-    else {
-      updateChats("server", data)
-    }
+
     locked.current = false;
   }
 
+  // ✅ AUTO SCROLL
   useEffect(() => {
-    if(chats.length === 0) {
-      ChatApi.direct_request("welcomegreeting").then(onDataReceived)
-    }
-    if(divRef.current){
-      divRef.current.scrollTop = 0
-    }
-  }, [chats.length])
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chats]);
 
+  // 🧱 UI
   return (
     <div
       className="chat-box-container flex flex-col"
       style={{
-        height: props.isActive ? "550px" : 0,
-        width: props.isActive ? "400px" : 0,
+        height: props.isActive ? "580px" : 0,
+        width: props.isActive ? "450px" : 0,
         opacity: props.isActive ? 1 : 0,
       }}
     >
-      <div className="chat-box-top bg-red-800 h-11 w-full text-white flex items-center px-5">
-        <h6 className="font-bold mx-2 text-xs">College Enquiry Chatbot</h6>
-        <span className="flex-1" />
-        <button
-          className="speach-btn hover:scale-125 m-5"
-          style={{
-            color: micActive ? "green" : "white",
-          }}
-          onClick={() => {
-            setMicActive(!micActive);
-          }}
-        >
-          <FontAwesomeIcon
-            className="text-xl speach-btn-icon"
-            icon={faMicrophone}
+      {/* 🔴 HEADER */}
+      <div className="chat-box-top bg-red-800 h-11 w-full text-white flex items-center px-4">
+        <div className="flex items-center gap-2">
+          {/* ✅ REAL LOGO FROM PUBLIC FOLDER */}
+          <img
+            src="/csvtu-logo.png"
+            alt="CSVTU Logo"
+            className="chatbot-logo"
           />
+          <h6 className="font-bold text-xs">
+            CSVTU UTD Bhilai – College Enquiry Chatbot
+          </h6>
+        </div>
+
+        <span className="flex-1" />
+
+        {/* MIC */}
+        <button
+          className="speach-btn hover:scale-125 mx-3"
+          style={{ color: micActive ? "lightgreen" : "white" }}
+          onClick={() => setMicActive((p) => !p)}
+        >
+          <FontAwesomeIcon className="text-lg speach-btn-icon" icon={faMicrophone} />
         </button>
+
+        {/* CLOSE */}
         <button
           className="hover:text-red-400 hover:scale-125"
-          onClick={() => props.toggle()}
+          onClick={props.toggle}
         >
-          <FontAwesomeIcon className="text-xl" icon={faXmark} />
+          <FontAwesomeIcon className="text-lg" icon={faXmark} />
         </button>
       </div>
-      <div className="chat-box-middle flex-1" ref={divRef}>
-        <div>
-          {chats.map((item, index) => (
-            <Chat
-              key={index}
-              data={item}
-              onAction={(klass, text) => {
-                if (locked.current) {
-                  return;
-                }
-                locked.current = true;
-                updateChats("client", text);
-                ChatApi.direct_request(klass).then(onDataReceived);
-              }}
-            />
-          ))}
-        </div>
+
+      {/* 🟡 CHAT AREA */}
+      <div className="chat-box-middle flex-1">
+        {chats.map((item, index) => (
+          <Chat
+            key={index}
+            data={item}
+            onAction={(klass, text) => {
+              if (locked.current) return;
+              locked.current = true;
+              updateChats("client", text);
+              ChatApi.direct_request(klass).then(onDataReceived);
+            }}
+          />
+        ))}
+        <div ref={messagesEndRef} />
       </div>
-      <div className="chat-box-bottom bg-red-800 h-16 w-full flex items-center justify-center p-3">
+
+      {/* 🔵 INPUT BAR */}
+      <div className="chat-box-bottom bg-red-800 h-16 w-full flex items-center p-3 gap-2">
         <input
           type="text"
-          className="text-sm"
-          placeholder="Type Here!"
-          autoCapitalize="false"
+          className="flex-1 text-sm"
+          placeholder="Type Here..."
           value={chatBoxValue}
           onChange={(e) => setChatBoxValue(e.target.value)}
           ref={inputRef}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              if (locked.current) {
-                return;
-              }
+              if (locked.current || !chatBoxValue.trim()) return;
               locked.current = true;
               updateChats("client", chatBoxValue);
               ChatApi.query_request(chatBoxValue).then(onDataReceived);
             }
           }}
         />
+
+        {/* SPEECH INPUT */}
         <button
           className="s2t-mic-btn"
-          style={{
-            color: listening ? "red" : "black",
-          }}
+          style={{ color: listening ? "red" : "black" }}
           onClick={() => {
             if (!supported) {
-              alert("Sorry! But Your Browser Does Not Supports Voice Inputs");
+              alert("Your browser does not support voice input.");
               return;
             }
-            if (listening) {
-              stop();
-              inputRef.current.focus();
-            } else {
-              listen();
-            }
+            listening ? stop() : listen();
           }}
         >
           <FontAwesomeIcon className="s2t-mic-btn-icon" icon={faMicrophone} />
         </button>
+
+        {/* SEND */}
         <button
           className="hover:text-red-500"
           onClick={() => {
-            if (locked.current) {
-              return;
-            }
+            if (locked.current || !chatBoxValue.trim()) return;
             locked.current = true;
             updateChats("client", chatBoxValue);
             ChatApi.query_request(chatBoxValue).then(onDataReceived);

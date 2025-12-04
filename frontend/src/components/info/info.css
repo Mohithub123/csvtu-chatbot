@@ -1,0 +1,103 @@
+.info-section {
+  margin: 80px 5vw 0 5vw;
+  max-width: 950px;
+  padding: 0 10px;
+}
+
+.info-section h1 {
+  color: #fff;
+  font-size: 2.3rem;
+  font-weight: 800;
+  margin-bottom: 28px;
+  text-shadow: 1px 2px 8px #44001e6f;
+  letter-spacing: 0.02em;
+}
+
+.info-section h2 {
+  color: #ffd6d6;
+  font-size: 1.5rem;
+  margin-bottom: 18px;
+  text-shadow: 1px 2px 8px #44001e50;
+}
+
+.info-section p {
+  color: #ffe6e6;
+  font-size: 1.1rem;
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+
+.info-section ul {
+  color: #fff;
+  margin-top: 18px;
+  margin-bottom: 18px;
+  padding-left: 20px;
+}
+
+.info-section li {
+  font-size: 1.09rem;
+  margin-bottom: 10px;
+  letter-spacing: 0.013em;
+  position: relative;
+}
+
+.info-section li::marker {
+  color: #fcfa89;
+}
+
+@media (max-width: 700px) {
+  .info-section {
+    margin: 22vw 2vw 0 2vw;
+    max-width: 99vw;
+    padding: 0 3vw;
+  }
+  .info-section h1 {
+    font-size: 1.7rem;
+    margin-bottom: 20px;
+  }
+}
+
+/* College Logo */
+.college-logo {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background-color: white;
+  padding: 4px;
+  object-fit: contain;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.35);
+}
+
+.swami-img-bottom {
+  position: fixed;
+  filter: drop-shadow(0 0 8px rgba(255,200,150,0.4));
+  bottom: 18px;
+  left: 18px;
+  width: 155px;    /* chhota-bada isse control ho jayega */
+  height: auto;
+  background: transparent;
+  border: none;
+  z-index: 999;
+}
+
+
+
+@media (max-width: 600px) {
+  .college-logo {
+    width: 45px;
+    height: 45px;
+    padding: 3px;
+  }
+}
+
+@media (max-width: 600px) {
+  .swami-img-bottom {
+    width: 105px;     /* mobile ke liye proportional */
+    bottom: 12px;     /* niche ki side se */
+    left: 10px;       /* left gap */
+    filter: drop-shadow(0 0 5px rgba(255,200,150,0.45));
+    opacity: 0.9;     /* zyada sharp na lage */
+  }
+}
+

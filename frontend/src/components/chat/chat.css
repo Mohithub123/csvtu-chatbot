@@ -21,3 +21,16 @@
 .direct-btn:active {
     background-color: #FFF59D;
 }
+
+/* ✅ CLICKABLE LINKS IN CHAT */
+.chat-link {
+  color: #2563eb;      /* Blue color */
+  text-decoration: underline;
+  font-weight: 600;
+  cursor: pointer;
+  word-break: break-all;
+}
+
+.chat-link:hover {
+  color: #1d4ed8;      /* darker blue on hover */
+}
