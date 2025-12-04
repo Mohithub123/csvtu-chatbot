@@ -918,6 +918,33 @@ Main tumhe category-wise verified list dikha sakta hoon.
   });
 }
 
+    // --------------------------------
+    // CSVTU OFFICIAL WEBSITE DIRECT LINK HANDLER
+    // --------------------------------
+    const askOfficialWebsite =
+      lower.includes("official website") ||
+      lower.includes("official site") ||
+      lower.includes("website link") ||
+      lower.includes("site link") ||
+      (lower.includes("website") && (lower.includes("csvtu") || lower.includes("university")));
+
+    if (askOfficialWebsite) {
+      return res.json({
+        reply: `
+**Official CSVTU Website (Verified)** 🌐
+
+You can visit the official website of  
+Chhattisgarh Swami Vivekanand Technical University (CSVTU) at:
+
+👉 https://csvtu.ac.in/
+
+This is the main site for all university information  
+(admissions, results, notices, syllabus, UTD, affiliated colleges, etc.).
+`.trim(),
+      });
+    }
+
+
 
     // --------------------------------
     // CSVTU ABOUT UNIVERSITY (SHORT CLEAN TEXT)
@@ -1733,6 +1760,13 @@ You are a college enquiry chatbot for CSVTU UTD Bhilai.
 
 If extra data about UTD programs is given, you MUST answer
 only using that data. Do not invent new courses or seat numbers.
+
+When user asks for "official website" or "official site":
+Always give this exact verified link only:
+https://csvtu.ac.in
+Do NOT invent any other site link.
+Do NOT add extra words inside the URL.
+Only show clean clickable URL.
 
 ${usedUtdData ? utdContextText : ""}
 
